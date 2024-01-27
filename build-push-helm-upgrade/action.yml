@@ -16,15 +16,21 @@ inputs:
   image-tag:
     description: 'Tag for the Docker image'
     default: 'latest'
-  chart-path:
-    description: 'Path to the Helm chart'
-    required: true
   release-name:
     description: 'Helm release name'
     required: true
   dockerfile-path:
     description: 'Path to the Dockerfile'
     default: '.'
+    required: true
+  chart-name:
+    description: 'Name of the Helm chart'
+    required: true
+  namespace:
+    description: 'Kubernetes namespace'
+    required: true
+  values:
+    description: 'Values file for the Helm chart'
     required: true
 
 runs:
@@ -43,5 +49,10 @@ runs:
       shell: bash
 
     - run: |
-        helm upgrade ${{ inputs.release-name }} ${{ inputs.chart-path }} --install --set image.repository=${{ inputs.ecr-repository }},image.tag=${{ inputs.image-tag }}
+        helm repo add ms-helm-charts s3://ms-helm-charts-bucket/stable/
+        helm repo update
+      shell: bash
+
+    - run: |
+        helm upgrade ${{ inputs.release-name }} ms-helm-charts/${{ inputs.chart-name }} --namespace ${{ inputs.namespace }} --values ${{ inputs.values }} --create-namespace --install --set image.repository=${{ inputs.ecr-repository }},image.tag=${{ inputs.image-tag }}
       shell: bash
