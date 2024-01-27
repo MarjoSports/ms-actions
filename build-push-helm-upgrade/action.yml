@@ -1,0 +1,47 @@
+name: 'Deploy to Kubernetes'
+description: 'Build, push to ECR and deploy to Kubernetes'
+inputs:
+  aws-access-key-id:
+    description: 'AWS access key id'
+    required: true
+  aws-secret-access-key:
+    description: 'AWS secret access key'
+    required: true
+  aws-region:
+    description: 'AWS region'
+    required: true
+  ecr-repository:
+    description: 'ECR repository name'
+    required: true
+  image-tag:
+    description: 'Tag for the Docker image'
+    default: 'latest'
+  chart-path:
+    description: 'Path to the Helm chart'
+    required: true
+  release-name:
+    description: 'Helm release name'
+    required: true
+  dockerfile-path:
+    description: 'Path to the Dockerfile'
+    default: '.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        aws ecr get-login-password --region ${{ inputs.aws-region }} | docker login --username AWS --password-stdin ${{ inputs.aws-region }}.dkr.ecr.amazonaws.com
+      shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
+
+    - run: |
+        docker build -t ${{ inputs.ecr-repository }}:${{ inputs.image-tag }} ${{ inputs.dockerfile-path }}
+        docker push ${{ inputs.ecr-repository }}:${{ inputs.image-tag }}
+      shell: bash
+
+    - run: |
+        helm upgrade ${{ inputs.release-name }} ${{ inputs.chart-path }} --install --set image.repository=${{ inputs.ecr-repository }},image.tag=${{ inputs.image-tag }}
+      shell: bash
