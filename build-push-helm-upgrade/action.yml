@@ -72,8 +72,7 @@ runs:
 
     - name: Add Helm repo
       run: |
-        helm plugin install https://github.com/hypnoglow/helm-s3.git
-        helm repo add ms-helm-charts s3://ms-helm-charts-bucket/stable/
+        helm repo add ms-helm-charts https://ms-helm-charts-bucket.s3.amazonaws.com/stable
         helm repo update
       shell: bash
 
