@@ -75,5 +75,5 @@ runs:
 
     - name: Upgrade Helm chart  
       run: |
-        helm upgrade ${{ inputs.release-name }} ms-helm-charts/${{ inputs.chart-name }} --namespace ${{ inputs.namespace }} --values ${{ inputs.values }} --create-namespace --install --set image.repository=${{ inputs.ecr-repository }},image.tag=${{ inputs.image-tag }}
+        helm upgrade ${{ inputs.release-name }} ms-helm-charts/${{ inputs.chart-name }} --namespace ${{ inputs.namespace }} --values ${{ inputs.values }} --create-namespace --wait --install --set image.repository=${{ inputs.ecr-repository }},image.tag=${{ inputs.image-tag }}
       shell: bash
