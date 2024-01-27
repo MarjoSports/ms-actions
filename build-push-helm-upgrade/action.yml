@@ -40,7 +40,8 @@ runs:
   using: "composite"
   steps:
     - run: |
-        ECR_REGISTRY_ID=$(aws ecr describe-registry --query 'registryId' --output text)
+        aws ecr describe-registry --query 'registryId' --output text --debug
+        echo "ECR Registry ID: $ECR_REGISTRY_ID"
         aws ecr get-login-password --region ${{ inputs.aws-region }} | docker login --username AWS --password-stdin $ECR_REGISTRY_ID.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com
       shell: bash
       env:
