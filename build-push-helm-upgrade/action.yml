@@ -39,32 +39,44 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: |
-        aws ecr describe-registry --query 'registryId' --output text --debug
-        echo "ECR Registry ID: $ECR_REGISTRY_ID"
-        aws ecr get-login-password --region ${{ inputs.aws-region }} | docker login --username AWS --password-stdin $ECR_REGISTRY_ID.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com
+    - name: Get AWS account ID
+      id: aws-account-id
+      run: echo "::set-output name=account_id::$(aws sts get-caller-identity --query 'Account' --output text)"
+      shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
+        AWS_REGION: ${{ inputs.aws-region }}
+
+    - name: Login to ECR
+      run: |
+        aws ecr get-login-password --region ${{ inputs.aws-region }} | docker login --username AWS --password-stdin ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com
       shell: bash
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
 
-    - run: |
+    - name: Build and push Docker image
+      run: |
         docker build -t ${{ inputs.ecr-repository }}:${{ inputs.image-tag }} ${{ inputs.dockerfile-path }}
         docker push ${{ inputs.ecr-repository }}:${{ inputs.image-tag }}
       shell: bash
 
-    - run: |
+    - name: Configure kubectl
+      run: |
         aws eks update-kubeconfig --name ${{ inputs.eks-cluster-name }} --region ${{ inputs.aws-region }}
       shell: bash
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
 
-    - run: |
+    - name: Add Helm repo
+      run: |
         helm repo add ms-helm-charts s3://ms-helm-charts-bucket/stable/
         helm repo update
       shell: bash
 
-    - run: |
+    - name: Upgrade Helm chart  
+      run: |
         helm upgrade ${{ inputs.release-name }} ms-helm-charts/${{ inputs.chart-name }} --namespace ${{ inputs.namespace }} --values ${{ inputs.values }} --create-namespace --install --set image.repository=${{ inputs.ecr-repository }},image.tag=${{ inputs.image-tag }}
       shell: bash
