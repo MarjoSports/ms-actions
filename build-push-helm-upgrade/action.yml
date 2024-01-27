@@ -32,6 +32,9 @@ inputs:
   values:
     description: 'Values file for the Helm chart'
     required: true
+  eks-cluster-name:
+    description: 'Name of the EKS cluster'
+    required: true
 
 runs:
   using: "composite"
@@ -47,6 +50,13 @@ runs:
         docker build -t ${{ inputs.ecr-repository }}:${{ inputs.image-tag }} ${{ inputs.dockerfile-path }}
         docker push ${{ inputs.ecr-repository }}:${{ inputs.image-tag }}
       shell: bash
+
+    - run: |
+        aws eks update-kubeconfig --name ${{ inputs.eks-cluster-name }} --region ${{ inputs.aws-region }}
+      shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
 
     - run: |
         helm repo add ms-helm-charts s3://ms-helm-charts-bucket/stable/
