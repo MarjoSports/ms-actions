@@ -58,8 +58,11 @@ runs:
 
     - name: Build and push Docker image
       run: |
-        ls stack
-        docker build -t ${{ inputs.ecr-repository }}:${{ inputs.image-tag }} ${{ inputs.dockerfile-path }}
+        if ${{ inputs.dockerfile-path }} !== "."; then
+          docker build -t ${{ inputs.ecr-repository }}:${{ inputs.image-tag }} ${{ inputs.dockerfile-path }}
+        else
+          docker build -t ${{ inputs.ecr-repository }}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile-path }} .
+        fi
         docker push ${{ inputs.ecr-repository }}:${{ inputs.image-tag }}
       shell: bash
 
