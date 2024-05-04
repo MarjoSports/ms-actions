@@ -25,6 +25,9 @@ inputs:
   build-type:
     description: 'build command to build the application'
     required: true
+  cloudfront_distribution_id:
+    description: 'Cloudfront distribution id'
+    required: false
 
 runs:
   using: "composite"
@@ -47,5 +50,10 @@ runs:
       run: |
         pip install awscli --upgrade --user
         aws s3 sync ${{ inputs.folder}} s3://${{ inputs.bucket-name }}/${{ inputs.bucket-path }} --acl public-read --delete
+      shell: bash
+    - name: Invalidate Cloudfront
+      if: ${{ inputs.cloudfront_distribution_id }}
+      run: |
+        aws cloudfront create-invalidation --distribution-id ${{ inputs.cloudfront_distribution_id }} --paths "/*"
       shell: bash
 
