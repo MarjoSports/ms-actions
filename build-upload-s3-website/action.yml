@@ -36,9 +36,13 @@ runs:
         aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
         aws-region: ${{ inputs.aws-region }}
     - name: npm install
-      run: npm install
+      run: |  
+        npm install
+      shell: bash
     - name: Build website
-      run: ${{ inputs.build-type }}
+      run: | 
+        ${{ inputs.build-type }}
+      shell: bash      
     - name: Upload to S3
       run: |
         pip install awscli --upgrade --user
