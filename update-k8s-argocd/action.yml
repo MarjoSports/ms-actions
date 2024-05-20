@@ -22,7 +22,7 @@ runs:
 
     - name: Update YAML file
       run: |
-        yq eval -i 'deployment.tag = "${{ github.sha }}"' ${{ inputs.file-path }}
+        yq eval -i '.deployment.tag = "${{ github.sha }}"' ${{ inputs.file-path }}
       shell: bash
 
     - name: Commit and push changes
