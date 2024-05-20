@@ -67,5 +67,3 @@ runs:
         fi
         docker push ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }}
       shell: bash
-
-      
