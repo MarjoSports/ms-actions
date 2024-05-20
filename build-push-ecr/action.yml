@@ -52,9 +52,12 @@ runs:
     - name: Build and push Docker image
       run: |
         if [ "${{ inputs.dockerfile-path }}" == "." ]; then
-          docker build  -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${GITHUB_SHA} ${{ inputs.dockerfile-path }}
+          docker build -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${GITHUB_SHA} ${{ inputs.dockerfile-path }}
+          docker build -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:latest ${{ inputs.dockerfile-path }}
         else
-          docker build  -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${GITHUB_SHA} -f ${{ inputs.dockerfile-path }} .
+          docker build -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${GITHUB_SHA} -f ${{ inputs.dockerfile-path }} .
+          docker build -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:latest -f ${{ inputs.dockerfile-path }} .
         fi
         docker push ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${GITHUB_SHA}
+        docker push ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:latest      
       shell: bash
