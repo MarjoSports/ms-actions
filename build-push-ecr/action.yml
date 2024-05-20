@@ -16,9 +16,6 @@ inputs:
   image-tag:
     description: 'Tag for the Docker image'
     default: 'latest'
-  release-name:
-    description: 'Helm release name'
-    required: true
   dockerfile-path:
     description: 'Path to the Dockerfile'
     default: '.'
