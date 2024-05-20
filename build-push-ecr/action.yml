@@ -66,6 +66,6 @@ runs:
         docker build --build-arg ${{ inputs.build-args }} -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile-path }} .
       fi
       docker push ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }}
-      shell: bash
+    shell: bash
 
       
