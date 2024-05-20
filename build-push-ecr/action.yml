@@ -1,4 +1,4 @@
-name: 'Deploy to Kubernetes'
+name: 'Build and push to ECR'
 description: 'Build, push to ECR and deploy to Kubernetes'
 inputs:
   aws-access-key-id:
