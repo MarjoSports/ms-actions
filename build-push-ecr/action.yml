@@ -13,9 +13,6 @@ inputs:
   ecr-repository:
     description: 'ECR repository name'
     required: true
-  image-tag:
-    description: 'Tag for the Docker image'
-    default: 'latest'
   dockerfile-path:
     description: 'Path to the Dockerfile'
     default: '.'
@@ -55,9 +52,9 @@ runs:
     - name: Build and push Docker image
       run: |
         if [ "${{ inputs.dockerfile-path }}" == "." ]; then
-          docker build  -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }} ${{ inputs.dockerfile-path }}
+          docker build  -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${GITHUB_SHA} ${{ inputs.dockerfile-path }}
         else
-          docker build  -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile-path }} .
+          docker build  -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${GITHUB_SHA} -f ${{ inputs.dockerfile-path }} .
         fi
-        docker push ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }}
+        docker push ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${GITHUB_SHA}
       shell: bash
