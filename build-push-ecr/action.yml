@@ -59,13 +59,13 @@ runs:
       shell: bash
 
     - name: Build and push Docker image
-    run: |
-      if [ "${{ inputs.dockerfile-path }}" == "." ]; then
-        docker build --build-arg ${{ inputs.build-args }} -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }} ${{ inputs.dockerfile-path }}
-      else
-        docker build --build-arg ${{ inputs.build-args }} -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile-path }} .
-      fi
-      docker push ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }}
-    shell: bash
+      run: |
+        if [ "${{ inputs.dockerfile-path }}" == "." ]; then
+          docker build --build-arg ${{ inputs.build-args }} -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }} ${{ inputs.dockerfile-path }}
+        else
+          docker build --build-arg ${{ inputs.build-args }} -t ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }} -f ${{ inputs.dockerfile-path }} .
+        fi
+        docker push ${{ steps.aws-account-id.outputs.account_id }}.dkr.ecr.${{ inputs.aws-region }}.amazonaws.com/${{ inputs.ecr-repository}}:${{ inputs.image-tag }}
+      shell: bash
 
       
