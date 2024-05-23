@@ -10,9 +10,6 @@ inputs:
   folder:
     description: 'Folder where the website is located'
     required: true
-  region:
-    description: 'Region where the bucket is located'
-    required: true
   aws-access-key-id:
     description: 'AWS access key id'
     required: true
