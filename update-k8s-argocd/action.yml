@@ -10,6 +10,8 @@ inputs:
   file-path:
     description: 'Path to the YAML file to update'
     required: true
+  target-branch:
+    description: 'Branch where the yaml file is stored'
 
 runs:
   using: "composite"
@@ -31,5 +33,5 @@ runs:
         git config --global user.email '${{ github.actor }}@users.noreply.github.com'
         git add ${{ inputs.file-path }}
         git commit -m "Update tag to ${{ github.sha }}"
-        git push
+        git push origin HEAD:${{inputs.target-branch}}
       shell: bash
