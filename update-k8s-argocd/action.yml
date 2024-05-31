@@ -21,6 +21,7 @@ runs:
       with:
         repository: ${{ inputs.repository }}
         token: ${{ inputs.github-token }}
+        ref: ${{ inputs.target-branch }}
 
     - name: Update YAML file
       run: |
@@ -34,5 +35,5 @@ runs:
         git add ${{ inputs.file-path }}
         git commit -m "Update tag to ${{ github.sha }}"
         git pull --rebase origin ${{ inputs.target-branch }}
-        git push origin HEAD:${{inputs.target-branch}}
+        git push origin HEAD:${{ inputs.target-branch }}
       shell: bash
