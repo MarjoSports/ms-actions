@@ -25,7 +25,9 @@ runs:
 
     - name: Update YAML file
       run: |
-        yq eval -i '.deployment.tag = "${{ github.sha }}"' ${{ inputs.file-path }}
+      for file in ${{ inputs.backend-file }} ${{ inputs.transactions-file }} ${{ inputs.email-file }} ; do
+        yq eval -i '.deployment.tag = "${{ github.sha }}"' $file
+      done
       shell: bash
 
     - name: Commit and push changes
