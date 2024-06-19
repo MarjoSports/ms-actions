@@ -1,0 +1,39 @@
+name: 'Update YAML file'
+description: 'Update tag to trigger ARGOCD Sync and Deploy'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  repository:
+    description: 'Repository to update'
+    required: true
+  file-path:
+    description: 'Path to the YAML file to update'
+    required: true
+  target-branch:
+    description: 'Branch where the yaml file is stored'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ inputs.repository }}
+        token: ${{ inputs.github-token }}
+        ref: ${{ inputs.target-branch }}
+
+    - name: Update YAML file
+      run: |
+        yq eval -i '.deployment.tag = "${{ github.sha }}"' ${{ inputs.file-path }}
+      shell: bash
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name '${{ github.actor }}'
+        git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+        git add ${{ inputs.file-path }}
+        git commit -m "Update tag to ${{ github.sha }}"
+        git pull --rebase origin ${{ inputs.target-branch }}
+        git push origin HEAD:${{ inputs.target-branch }}
+      shell: bash
