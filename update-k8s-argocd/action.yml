@@ -12,6 +12,12 @@ inputs:
     required: true
   target-branch:
     description: 'Branch where the yaml file is stored'
+  backend-file:
+    description: 'backend manifest file path'
+  transactions-file:
+    description: 'Transactions manifest file path'
+  email-file:
+    description: 'Email manifest file path'
 
 runs:
   using: "composite"
