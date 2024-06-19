@@ -12,12 +12,6 @@ inputs:
     required: true
   target-branch:
     description: 'Branch where the yaml file is stored'
-  backend-file:
-    description: 'backend manifest file path'
-  transactions-file:
-    description: 'Transactions manifest file path'
-  email-file:
-    description: 'Email manifest file path'
 
 runs:
   using: "composite"
@@ -31,9 +25,7 @@ runs:
 
     - name: Update YAML file
       run: |
-        for file in ${{ inputs.backend-file }} ${{ inputs.transactions-file }} ${{ inputs.email-file }} ; do
-          yq eval -i '.deployment.tag = "${{ github.sha }}"' $file
-        done
+        yq eval -i '.deployment.tag = "${{ github.sha }}"' ${{ inputs.file-path }}
       shell: bash
 
     - name: Commit and push changes
