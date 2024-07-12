@@ -29,6 +29,8 @@ runs:
 
     - name: Install SOPS
       run: sudo apt-get update && sudo apt-get install -y sops
+      shell: bash
 
     - name: Decrypt the SOPS file
       run: sops -d ${{ inputs.encrypted-file }} > ${{ inputs.decrypted-file }}
+      shell: bash
