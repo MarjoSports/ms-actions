@@ -1,0 +1,34 @@
+name: 'Decrypt SOPS File'
+description: 'Decrypt a SOPS encrypted file using AWS KMS'
+inputs:
+  aws-access-key-id:
+    description: 'AWS access key id'
+    required: true
+  aws-secret-access-key:
+    description: 'AWS secret access key'
+    required: true
+  aws-region:
+    description: 'AWS region'
+    required: true
+  encrypted-file:
+    description: 'The path to the SOPS encrypted file'
+    required: true
+  decrypted-file:
+    description: 'The path to save the decrypted file'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Install SOPS
+      run: sudo apt-get update && sudo apt-get install -y sops
+
+    - name: Decrypt the SOPS file
+      run: sops -d ${{ inputs.encrypted-file }} > ${{ inputs.decrypted-file }}
